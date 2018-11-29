@@ -1,0 +1,23 @@
+{
+    "name": "mayunfeng/yii2-aliyunoss",
+    "type": "yii2-extension",
+    "description": "The aliyunoss integration for the Yii framework",
+    "keywords": ["yii2", "aliyun", "oss",  "aliyunoss", "helper", "mayunfeng"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "马运锋",
+            "email": "mayunfeng@jwsem.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "yiisoft/yii2": "*",
+        "aliyuncs/oss-sdk-php":"^2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "yii\\aliyunoss\\": "src/"
+        }
+    }
+}
