@@ -35,11 +35,16 @@ class OSS extends Component
     /**
      * @var string 绑定的域名别名
      */
-    public $cname;
+    public $cname = false;
+
+    public $securityToken = null;
+
+    public $requestProxy = null;
+
     /**
      * @var \OSS\OssClient OssClient实例
      */
-    protected $ossClient;
+    private static $_oss;
 
     /**
      * 返回OssClient实例(单例)
@@ -47,13 +52,15 @@ class OSS extends Component
     public function client()
     {
         try {
-            if (empty($this->ossClient)) {
-                $this->ossClient = new OssClient($this->accessKeyId, $this->accessKeySecret, $this->endPoint);
+            if (self::$_oss == null) {
+                self::$_oss = new OssClient($this->accessKeyId, $this->accessKeySecret, $this->endPoint,
+                    $this->cname, $this->securityToken, $this->requestProxy);
             }
         } catch (OssException $exception) {
-            $this->ossClient = null;
+            self::$_oss = null;
         }
-        return $this->ossClient;
+
+        return self::$_oss;
     }
 
 
@@ -66,7 +73,7 @@ class OSS extends Component
     public function uploadFile(string $filename, string $filepath)
     {
         try {
-            $result = $this->client()->uploadFile($this->bucket,$filename, $filepath);
+            $result = $this->client()->uploadFile($this->bucket, $filename, $filepath);
             if (isset($result['oss-request-url'])) {
                 return $result['oss-request-url'];
             } else {
@@ -78,4 +85,19 @@ class OSS extends Component
         }
     }
 
+
+    public function putObject($filename, $content, $option = null)
+    {
+        try {
+            $result = $this->client()->putObject($this->bucket, $filename, $content, $option);
+            if (isset($result['oss-request-url'])) {
+                return $result['oss-request-url'];
+            } else {
+                return null;
+            }
+        } catch (OssException $exception) {
+            Yii::error(__FUNCTION__ . ": FAILED\n" . $exception->getMessage() . "\n");
+            return null;
+        }
+    }
 }
